@@ -12,6 +12,7 @@ def get_database():
 
 @app.get("/")
 async def root():
+    # тут можно вывести что-то полезно, например, статистику по объектам 
     return {"message": "Яндекс практикум. Хакатон #3"}
 
 
@@ -22,6 +23,13 @@ async def servises(database=Depends(get_database)):
 
 @app.get("/cash_desks/")
 async def cash_desks(database=Depends(get_database)):
+    """
+    тут можно добавить параметр - имя кассы. Если он задан, то выводим информацию только по одной кассе
+    /cash_desks/?name=А
+    cash_desks(name:str = "", database=Depends(get_database)):
+
+    Но тогда надо предусмотреть и 404
+    """
     return [{'name': cash_desk.name,
              'available_service': cash_desk.available_service,
              'closed': cash_desk.closed}
@@ -30,13 +38,20 @@ async def cash_desks(database=Depends(get_database)):
 
 @app.get("/show_queue/")
 async def get_articles(database=Depends(get_database)):
+    """
+    Убери глагол из url
+    "/queues/" - Метод GET уже говорит нам что мы хотим запросить информацию. Можно как и выше добавить параметры
+
+    ОБрати внимание на названия методов get_articles - такого быть не должно, это все видно в  http://127.0.0.1:8000/docs
+    """
     return [(cash_desk.name, *cash_desk.queue)
             for cash_desk in database['cash_desks']]
 
-
+# тоже переделай url имхо Достаточно /tickets/ POST
 @app.post("/resive_ticket/")
 async def create_ticket(ticket: ticket_resive,
                         database=Depends(get_database)):
+    # идея для рефакторинга - написать класс, который будет создавать талончик
     if ticket.service in database['servises']:
         unbusiest_deck = None
         for pos, cash_desk in enumerate(database['cash_desks']):
@@ -56,7 +71,7 @@ async def create_ticket(ticket: ticket_resive,
     raise HTTPException(status_code=403,
                         detail="service not supported")
 
-
+# url "/services/"
 @app.post("/service_done/")
 async def serv_done(service_call: service_call,
                     database=Depends(get_database)):
@@ -73,7 +88,7 @@ async def serv_done(service_call: service_call,
         raise HTTPException(status_code=403,
                             detail="cash desk not found")
 
-
+# /cash_desks/{cash_desk_name}/current_client/
 @app.get("/show_current_client/{cash_desk_name}")
 async def show_current_client(cash_desk_name, database=Depends(get_database)):
     cash_desk_found = False
@@ -87,11 +102,17 @@ async def show_current_client(cash_desk_name, database=Depends(get_database)):
         raise HTTPException(status_code=403,
                             detail="cash desk not found")
 
-
+#/cash_desks/{cash_desk_name}/close/
 @app.post("/close_cash_desk/")
 async def close_cash_desk(service_call: service_call,
                           database=Depends(get_database)):
     cash_desk_found = False
+
+    # я бы добавила в cash_desk - append_to_queue(tickets:list):bool
+    # get_tickets(service_kind:str):list  is_queue_empty():bool 
+    # и метод close который бы все чистил и ставил статус 
+    # что-то подобное 
+    # тогда этот длинный метод можно было бы сделать короче и понятнее
     for cash_desk in database['cash_desks']:
         if cash_desk.name == service_call.name:
             cash_desk_found = True
@@ -116,13 +137,14 @@ async def close_cash_desk(service_call: service_call,
         raise HTTPException(status_code=403,
                             detail="Cash desk not found")
 
-
+#/cash_desks/ - POST достаточно 
 @app.post("/cash_desk_add/")
 async def cash_desk_add(cash_desk: cash_desk,
                           database=Depends(get_database)):
     database['cash_desks'].append(cash_desk)
     return cash_desk
 
+#/services/ - POST достаточно 
 @app.post("/service_add/")
 async def service_add(service_call: service_call,
                           database=Depends(get_database)):
