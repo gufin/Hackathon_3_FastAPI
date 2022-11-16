@@ -1,22 +1,24 @@
-# Hackathon_3_FastAPI
-## _З хакатон яндекс практикума. Решение задачи на FastAPI. (3 уровень сложности)_
-ЗАДАЧА Б: Талончики в "Сбербанке" :деньги_с_крыльями::деньги:
-Есть несколько касс обслуживания. Они могут предоставлять несколько видов услуг.
-Клиент может заказать талончик в кассу по одному виду услуг. В номере талончика зафиксирован вид услуг.
-Надо написать API которое:
- - показывает информацию о кассах
- - показывает информацию об услугах
- - выдает талончик в очередь в кассу
- - показывает очереди
- - "Услуга оказана". Т.е. удаляет клиента из очереди (в правильном порядке) и  возвращает - -информацию о следующем клиенте.
- - показывает какой клиент сейчас обслуживается на кассе
- 
-Уровни сложности при реализации этой задачи
-### Уровень 1:
-Жестко задаем изначально в коде кол-во касс, виды услуг и какие кассы какие услуги могут оказывать.
-Например:
-В нашем отделении 2 кассы. Через обе можно класть/снимать деньги, одна занимается ипотекой, другая занимается выдачей карт.
-### Уровень 2:
-Добавить метод "Касса закрылась" с раскидкой очереди по оставшимся.
-### Уровень 3:
-Сделать методы для создания новых касс и новых услуг.
+# :suspect: Third hackathon Yandex workshops. Problem-solving on FastAPI. (3 difficulty level)
+## TASK B: Tickets in "Somebank" :money_with_wings:There are several cash desks. They may provide several types of services. The client can order a ticket at the cash desk for one kind of service. The type of service is fixed in the voucher number. It would help if you wrote an API that:
+
+- shows information about cash registers
+- shows information about services
+- issues a ticket in line at the cashier
+- shows queues
+- "Service rendered." Those. Removes a client from the queue (in the correct order) and returns information about the next client.
+- shows which customer is currently being serviced at the checkout
+Difficulty levels for this task
+
+### Level 1:
+Initially, we rigidly set in the code the number of cash desks, types of services, and which cash desks can provide which services. For example, there are two cash desks in our branch. Through both, you can deposit/withdraw money; one deals with mortgages and the other deals with the issuance of cards.
+
+### Level 2:
+Add the method "Cashier closed" with the queue distribution for the remaining ones.
+
+### Level 3:
+Make methods for creating new cash registers and new services.
+
+## :shipit: In the plans
+- Make it possible to work with the database
+- Make the code look good
+- Write a tests :grinning:
